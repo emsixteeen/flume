@@ -114,6 +114,13 @@ limitations under the License.
       <artifactId>avro-ipc</artifactId>
     </dependency>
 
+    <dependency>
+    	<groupId>org.apache.httpcomponents</groupId>
+    	<artifactId>httpclient</artifactId>
+    	<version>4.1.2</version>
+    	<type>jar</type>
+    	<scope>compile</scope>
+    </dependency>
   </dependencies>
 
 </project>

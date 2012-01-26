@@ -55,6 +55,9 @@ import org.apache.flume.source.DefaultSourceFactory;
 import org.apache.flume.source.ExecSource;
 import org.apache.flume.source.NetcatSource;
 import org.apache.flume.source.SequenceGeneratorSource;
+
+import org.apache.flume.source.GnipNGTwitterSource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -107,6 +110,7 @@ public class Application {
     sourceFactory.register("netcat", NetcatSource.class);
     sourceFactory.register("exec", ExecSource.class);
     sourceFactory.register("avro", AvroSource.class);
+	  sourceFactory.register( "gnip", GnipNGTwitterSource.class);
 
     sinkFactory.register("null", NullSink.class);
     sinkFactory.register("logger", LoggerSink.class);
