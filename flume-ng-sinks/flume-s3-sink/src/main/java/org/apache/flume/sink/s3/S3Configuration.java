@@ -21,8 +21,8 @@ public class S3Configuration {
     this.accessKey = accessKey;
     this.secretKey = secretKey;
     this.bucket = bucket;
-    this.prefix = prefix;
-    this.filename = filename;
+    this.prefix = (prefix != null) ? prefix : "FlumeS3Sink"; 
+    this.filename = (filename != null) ? filename : "S3SinkData";
   }
   
   public S3Service getService() throws ServiceException {
