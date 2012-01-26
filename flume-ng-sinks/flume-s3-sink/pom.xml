@@ -15,7 +15,6 @@
   		<artifactId>jets3t</artifactId>
   		<version>0.8.1</version>
   		<type>jar</type>
-  		<scope>runtime</scope>
   	</dependency>
   	<dependency>
   		<groupId>org.apache.flume</groupId>
