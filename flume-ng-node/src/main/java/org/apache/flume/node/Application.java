@@ -49,6 +49,7 @@ import org.apache.flume.sink.LoggerSink;
 import org.apache.flume.sink.NullSink;
 import org.apache.flume.sink.RollingFileSink;
 import org.apache.flume.sink.hdfs.HDFSEventSink;
+import org.apache.flume.sink.s3.S3EventSink;
 import org.apache.flume.source.AvroSource;
 import org.apache.flume.source.DefaultSourceFactory;
 import org.apache.flume.source.ExecSource;
@@ -112,6 +113,7 @@ public class Application {
     sinkFactory.register("file-roll", RollingFileSink.class);
     sinkFactory.register("hdfs", HDFSEventSink.class);
     sinkFactory.register("avro", AvroSink.class);
+    sinkFactory.register("s3", S3EventSink.class);
   }
 
   public boolean parseOptions() throws ParseException {

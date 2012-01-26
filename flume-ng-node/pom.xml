@@ -121,6 +121,13 @@
       <artifactId>jackson-mapper-asl</artifactId>
     </dependency>
 
+    <dependency>
+    	<groupId>org.apache.flume</groupId>
+    	<artifactId>flume-s3-sink</artifactId>
+    	<version>1.0.0-incubating</version>
+    	<type>jar</type>
+    	<scope>compile</scope>
+    </dependency>
   </dependencies>
 
 </project>
