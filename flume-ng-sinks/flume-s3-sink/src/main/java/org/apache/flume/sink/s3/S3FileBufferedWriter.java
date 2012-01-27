@@ -27,7 +27,7 @@ public class S3FileBufferedWriter implements S3BufferedWriter {
   static final long defaultRollSize = 5 * 1024 * 1024; // 5MB
   static final int defaultRollCount = 1024;
   static final int defaultOverflowLimit = 2;
-  static final String filePrefix = "s3Sink-";
+  static final String tmpFilePrefix = "s3Sink-";
   
   private File tempPath;
   private long rollInterval;
@@ -46,6 +46,7 @@ public class S3FileBufferedWriter implements S3BufferedWriter {
   private S3Configuration s3Configuration;
   private Semaphore streams;
   private ExecutorService executor;
+  private Event lastEvent;
   
   public S3FileBufferedWriter(S3Configuration s3Configuration) {
     this.s3Configuration = s3Configuration;
@@ -71,7 +72,7 @@ public class S3FileBufferedWriter implements S3BufferedWriter {
   @Override
   public void open() throws IOException {
     executor = Executors.newFixedThreadPool(overflowLimit);
-    file = File.createTempFile(filePrefix, null, tempPath);
+    file = File.createTempFile(tmpFilePrefix, null, tempPath);
     out = new FileOutputStream(file);
     LOG.info("Opened new temporary file {}", file);
   }
@@ -101,6 +102,8 @@ public class S3FileBufferedWriter implements S3BufferedWriter {
   
   @Override
   public void append(Event e, EventFormatter fmt) throws IOException, InterruptedException {
+    // Save last event for output bucketing
+    lastEvent = e;
     doRotate();
 
     byte[] b = fmt.format(e);
@@ -124,10 +127,12 @@ public class S3FileBufferedWriter implements S3BufferedWriter {
         try {
           S3Service s3Service = s3Configuration.getService();
           S3Object s3Object = new S3Object(file);
+          String objectKey = s3Configuration.getPrefix(lastEvent) + "/" + s3Configuration.getFilename() + "-" + System.currentTimeMillis() + "." + rollCounter;
           long startTime = System.currentTimeMillis();
           
+          LOG.info("Attempting to upload {} to s3: {}", file, objectKey);
           // rollCounter Thread safety?
-          s3Object.setKey(s3Configuration.getPrefix() + "/" + s3Configuration.getFilename() + "-" + System.currentTimeMillis() + "." + rollCounter);
+          s3Object.setKey(objectKey);
           s3Service.putObject(s3Configuration.getBucket(), s3Object);
           LOG.info("Succesfully uploaded " + file + " to s3: \"{}\" in {}ms", s3Object.getKey(), System.currentTimeMillis() - startTime);
 
@@ -173,7 +178,7 @@ public class S3FileBufferedWriter implements S3BufferedWriter {
     initiateUpload(file);
     
     // New file
-    file = File.createTempFile(filePrefix, null, tempPath);
+    file = File.createTempFile(tmpFilePrefix, null, tempPath);
     out = new FileOutputStream(file);
     LOG.info("Opened new temporary file {}", file);
 

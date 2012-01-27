@@ -79,6 +79,7 @@ public class S3EventSink extends AbstractSink implements PollableSink,
       event = channel.take();
       
       if (event != null) {
+        event.getHeaders().put("timestamp", String.valueOf(System.currentTimeMillis()));
         bufferedWriter.append(event, formatter);
       }
       

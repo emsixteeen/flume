@@ -1,4 +1,6 @@
 package org.apache.flume.sink.s3;
+import org.apache.flume.Event;
+import org.apache.flume.formatter.output.BucketPath;
 import org.jets3t.service.S3Service;
 import org.jets3t.service.S3ServiceException;
 import org.jets3t.service.ServiceException;
@@ -21,7 +23,7 @@ public class S3Configuration {
     this.accessKey = accessKey;
     this.secretKey = secretKey;
     this.bucket = bucket;
-    this.prefix = (prefix != null) ? prefix : "FlumeS3Sink"; 
+    this.prefix = (prefix != null) ? prefix : "FlumeS3Sink/%Y-%m-%d/%H"; 
     this.filename = (filename != null) ? filename : "S3SinkData";
   }
   
@@ -39,8 +41,8 @@ public class S3Configuration {
     return bucket;
   }
   
-  public String getPrefix() {
-    return prefix;
+  public String getPrefix(Event e) {
+    return BucketPath.escapeString(prefix, e.getHeaders());
   }
   
   public String getFilename() {
